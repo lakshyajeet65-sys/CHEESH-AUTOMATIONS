@@ -7,12 +7,15 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   
   body {
     background-color: #000000;
     color: #ffffff;
     font-family: 'Inter', system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -111,4 +114,4 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(to bottom, #ea580c, #dc2626);
-} 
+}
