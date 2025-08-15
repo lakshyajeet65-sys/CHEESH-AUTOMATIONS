@@ -189,17 +189,13 @@ const Services = () => {
                  onClick={(e) => {
                    e.stopPropagation();
                    setActiveService(index);
-                   // Scroll down to the service details section
+                   // Scroll to the service details section
                    setTimeout(() => {
-                     const servicesSection = document.querySelector('#services');
-                     if (servicesSection) {
-                       const rect = servicesSection.getBoundingClientRect();
-                       const sectionHeight = servicesSection.offsetHeight;
-                       // Scroll to 80% down the section to show the details
-                       const offsetPosition = rect.top + window.pageYOffset + (sectionHeight * 0.8);
-                       window.scrollTo({
-                         top: offsetPosition,
-                         behavior: 'smooth'
+                     const serviceDetails = document.querySelector('#service-details');
+                     if (serviceDetails) {
+                       serviceDetails.scrollIntoView({ 
+                         behavior: 'smooth', 
+                         block: 'center' 
                        });
                      }
                    }, 100);
@@ -248,7 +244,7 @@ const Services = () => {
         </div>
 
         {/* Active Service Details */}
-        <div className="bg-gray-800/30 backdrop-blur-custom rounded-2xl p-8 border border-gray-700/50">
+        <div id="service-details" className="bg-gray-800/30 backdrop-blur-custom rounded-2xl p-8 border border-gray-700/50">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
               <h3 className="text-2xl font-bold text-white mb-4">
