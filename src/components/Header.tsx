@@ -43,7 +43,7 @@ const Header = () => {
             <img
               src="/CHEESH-LOGO.png"
               alt="CHEESH AUTOMATIONS Logo"
-              className="w-56 h-70 object-contain"
+              className="h-16 w-auto md:h-20 lg:h-24 object-contain"
               onError={() => {
                 const logoDiv = document.getElementById('logo-text');
                 if (logoDiv) logoDiv.style.display = 'block';
@@ -103,4 +103,4 @@ const Header = () => {
   )
 }
 
-export default Header; 
+export default Header;
