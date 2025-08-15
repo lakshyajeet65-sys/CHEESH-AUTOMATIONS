@@ -189,13 +189,14 @@ const Services = () => {
                  onClick={(e) => {
                    e.stopPropagation();
                    setActiveService(index);
-                   // Scroll to the active service details section with offset
+                   // Scroll down to the service details section
                    setTimeout(() => {
-                     const element = document.querySelector('#services');
-                     if (element) {
-                       const offset = 100; // Adjust this value as needed
-                       const elementPosition = element.getBoundingClientRect().top;
-                       const offsetPosition = elementPosition + window.pageYOffset - offset;
+                     const servicesSection = document.querySelector('#services');
+                     if (servicesSection) {
+                       const rect = servicesSection.getBoundingClientRect();
+                       const sectionHeight = servicesSection.offsetHeight;
+                       // Scroll to 80% down the section to show the details
+                       const offsetPosition = rect.top + window.pageYOffset + (sectionHeight * 0.8);
                        window.scrollTo({
                          top: offsetPosition,
                          behavior: 'smooth'
