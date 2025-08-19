@@ -3,7 +3,8 @@ import './globals.css'
 // Remove or keep other widgets as needed
 // import ChatWidget from '@/components/ChatWidget'
 // import AssistantChat from '@/components/AssistantChat'
-import N8nChat from '@/components/N8nChat'
+import dynamic from 'next/dynamic'
+const N8nChat = dynamic(() => import('@/components/N8nChat'), { ssr: false })
 
 export const metadata: Metadata = {
   title: 'CHEESH AUTOMATIONS - Professional Automation Solutions',
