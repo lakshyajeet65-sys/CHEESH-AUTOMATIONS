@@ -54,7 +54,6 @@ export default function AdminPage() {
     return new Date(timestamp).toLocaleString()
   }
 
-  // Chatbot send message handler
   const sendMessage = async () => {
     if (!input.trim()) return
     setMessages((msgs) => [...msgs, { sender: 'You', text: input }])
@@ -115,7 +114,7 @@ export default function AdminPage() {
                 key={submission.id}
                 className="bg-gray-800/30 backdrop-blur-custom rounded-2xl p-6 border border-gray-700/50"
               >
-                {/* Submission content... (keep your existing code) */}
+                {/* Your existing submission display code here */}
               </div>
             ))}
           </div>
