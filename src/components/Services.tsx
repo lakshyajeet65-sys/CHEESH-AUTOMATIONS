@@ -134,43 +134,43 @@ const Services = () => {
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {services.map((service, index) => (
-                         <div
-               key={service.id}
+            <div
+              key={service.id}
                className={`bg-gray-800/50 backdrop-blur-custom rounded-2xl p-8 border border-gray-700/50 card-hover cursor-pointer transition-all duration-300 group ${
-                 activeService === index ? 'ring-2 ring-cheesh-orange bg-gray-800/70' : ''
-               }`}
-               onClick={() => setActiveService(index)}
-             >
+                activeService === index ? 'ring-2 ring-cheesh-orange bg-gray-800/70' : ''
+              }`}
+              onClick={() => setActiveService(index)}
+            >
                              {/* Process Flow Lines */}
-               <div className="relative mb-6">
+              <div className="relative mb-6">
                  <div className="absolute top-0 right-0 w-20 h-20 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
                    <svg viewBox="0 0 100 100" className="w-full h-full group-hover:scale-110 transition-transform duration-300">
-                     <path d="M0,50 Q25,25 50,50 T100,50" stroke="currentColor" strokeWidth="2" fill="none" className={`text-${service.color}`}/>
+                    <path d="M0,50 Q25,25 50,50 T100,50" stroke="currentColor" strokeWidth="2" fill="none" className={`text-${service.color}`}/>
                      <circle cx="0" cy="50" r="3" fill="currentColor" className={`text-${service.color} animate-pulse`}/>
                      <circle cx="100" cy="50" r="3" fill="currentColor" className={`text-${service.color} animate-pulse`} style={{ animationDelay: '0.5s' }}/>
-                   </svg>
-                 </div>
+                  </svg>
+                </div>
                  {/* Floating particles */}
                  <div className="absolute top-2 left-2 w-2 h-2 bg-cheesh-orange rounded-full opacity-0 group-hover:opacity-60 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                  <div className="absolute top-4 right-4 w-1 h-1 bg-cheesh-blue rounded-full opacity-0 group-hover:opacity-60 animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-               </div>
+              </div>
               
-                             <div className="flex items-center mb-6">
+              <div className="flex items-center mb-6">
                  <div className={`w-16 h-16 bg-gradient-to-br from-${service.color} to-${service.color}/80 rounded-xl flex items-center justify-center mr-4 relative group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                    <service.icon className="w-8 h-8 text-white group-hover:rotate-12 transition-transform duration-300" />
                    {/* Animated Ring */}
                    <div className={`absolute inset-0 border-2 border-${service.color} rounded-xl animate-ping opacity-20`}></div>
                    {/* Glow Effect */}
                    <div className={`absolute inset-0 bg-${service.color} rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm`}></div>
-                 </div>
-                 <div>
+                </div>
+                <div>
                    <h3 className="text-xl font-bold text-white group-hover:text-cheesh-orange transition-colors duration-300">{service.title}</h3>
-                   <div className="flex items-center space-x-2 mt-1">
+                  <div className="flex items-center space-x-2 mt-1">
                      <Zap className="w-4 h-4 text-cheesh-orange animate-pulse" />
-                     <span className="text-sm text-gray-400">Automation</span>
-                   </div>
-                 </div>
-               </div>
+                    <span className="text-sm text-gray-400">Automation</span>
+                  </div>
+                </div>
+              </div>
               
               <p className="text-gray-300 mb-6 leading-relaxed">
                 {service.description}
@@ -185,7 +185,7 @@ const Services = () => {
                 ))}
               </div>
 
-                             <button 
+              <button 
                  onClick={(e) => {
                    e.stopPropagation();
                    setActiveService(index);
@@ -201,10 +201,10 @@ const Services = () => {
                    }, 100);
                  }}
                  className="w-full btn-secondary flex items-center justify-center space-x-2 group-hover:bg-cheesh-orange group-hover:text-white transition-all duration-300"
-               >
-                 <span>Learn More</span>
+              >
+                <span>Learn More</span>
                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
-               </button>
+              </button>
             </div>
           ))}
         </div>
