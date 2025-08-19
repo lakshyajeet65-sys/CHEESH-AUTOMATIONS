@@ -20,7 +20,7 @@ interface Message {
 }
 
 export default function AdminPage() {
-  // Existing state and logic
+  // Existing submission state and logic
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -43,7 +43,7 @@ export default function AdminPage() {
       } else {
         setError('Failed to fetch submissions')
       }
-    } catch (error) {
+    } catch {
       setError('Network error')
     } finally {
       setLoading(false)
@@ -54,6 +54,7 @@ export default function AdminPage() {
     return new Date(timestamp).toLocaleString()
   }
 
+  // Chatbot send message logic
   const sendMessage = async () => {
     if (!input.trim()) return
     setMessages((msgs) => [...msgs, { sender: 'You', text: input }])
@@ -80,9 +81,9 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cheesh-dark via-gray-900 to-black">
+    <div className="min-h-screen bg-gradient-to-br from-cheesh-dark via-gray-900 to-black relative">
       <div className="container mx-auto px-4 py-8">
-        {/* Existing UI */}
+        {/* Existing Contact Submission UI */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">Contact Form Submissions</h1>
           <p className="text-gray-300">Manage and view all contact form submissions</p>
@@ -114,7 +115,7 @@ export default function AdminPage() {
                 key={submission.id}
                 className="bg-gray-800/30 backdrop-blur-custom rounded-2xl p-6 border border-gray-700/50"
               >
-                {/* Your existing submission display code here */}
+                {/* Existing submission display code here (your current detailed layout) */}
               </div>
             ))}
           </div>
@@ -130,7 +131,7 @@ export default function AdminPage() {
       {/* Chatbot toggle button */}
       <button
         onClick={() => setChatOpen(!chatOpen)}
-        className="fixed bottom-6 right-6 bg-cheesh-orange text-black px-5 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow font-semibold z-50"
+        className="fixed bottom-6 right-6 bg-cheesh-orange text-black px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow font-semibold z-50"
         aria-label="Toggle Chatbot"
       >
         {chatOpen ? 'Close Chat' : 'Chat'}
@@ -139,7 +140,7 @@ export default function AdminPage() {
       {/* Chatbot window */}
       {chatOpen && (
         <div
-          className="fixed bottom-20 right-6 w-80 h-[500px] bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-2xl flex flex-col overflow-hidden z-50"
+          className="fixed bottom-20 right-6 w-80 max-h-[500px] bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-2xl flex flex-col overflow-hidden z-50"
           style={{ boxShadow: '0 8px 20px rgb(0 0 0 / 0.8)' }}
         >
           <div className="flex items-center justify-between bg-cheesh-orange px-4 py-2">
@@ -149,9 +150,9 @@ export default function AdminPage() {
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-900 text-gray-200">
             {messages.length === 0 && (
-              <p className="text-gray-400 italic text-sm">Start the conversation by typing a message below.</p>
+              <p className="italic text-sm text-gray-400">Start the conversation by typing a message below.</p>
             )}
             {messages.map((msg, index) => (
               <div
