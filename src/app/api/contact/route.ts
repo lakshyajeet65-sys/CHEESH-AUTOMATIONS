@@ -41,22 +41,26 @@ export async function POST(request: NextRequest) {
     contactSubmissions.push(submission)
 
     // Log the submission (in production, send email notification)
-  // Send to Google Sheets
-try {
-  const googleSheetsUrl = process.env.GOOGLE_SHEETS_WEBAPP_URL
-  if (googleSheetsUrl) {
-    await fetch(googleSheetsUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(submission),
-    })
-    console.log('Data sent to Google Sheets successfully')
-  }
-} catch (error) {
-  console.error('Error sending to Google Sheets:', error)
-}
+    console.log('New contact submission:', submission)
+
+    // Send to Google Sheets
+    try {
+      const googleSheetsUrl = process.env.GOOGLE_SHEETS_WEBAPP_URL
+      if (googleSheetsUrl) {
+        await fetch(googleSheetsUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submission),
+        })
+        console.log('Data sent to Google Sheets successfully')
+      }
+    } catch (error) {
+      console.error('Error sending to Google Sheets:', error)
+    }
+
+    // Return success response
     return NextResponse.json(
       { 
         success: true, 
@@ -82,4 +86,3 @@ export async function GET() {
     { status: 200 }
   )
 }
-
