@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import ChatWidget from '@/components/ChatWidget'
-import AssistantChat from '@/components/AssistantChat'
+// Remove or keep other widgets as needed
+// import ChatWidget from '@/components/ChatWidget'
+// import AssistantChat from '@/components/AssistantChat'
+import N8nChat from '@/components/N8nChat'
 
 export const metadata: Metadata = {
   title: 'CHEESH AUTOMATIONS - Professional Automation Solutions',
@@ -33,8 +35,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         {children}
-        <ChatWidget />
-        <AssistantChat />
+        {/* <ChatWidget /> */}
+        {/* <AssistantChat /> */}
+        <N8nChat />
       </body>
     </html>
   )
