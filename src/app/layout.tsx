@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import ChatWidget from '@/components/ChatWidget'
+import AssistantChat from '@/components/AssistantChat'
 
 export const metadata: Metadata = {
   title: 'CHEESH AUTOMATIONS - Professional Automation Solutions',
@@ -31,7 +33,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         {children}
+        <ChatWidget />
+        <AssistantChat />
       </body>
     </html>
   )
-}
+} 
