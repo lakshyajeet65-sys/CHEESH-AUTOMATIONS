@@ -1,88 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// In-memory storage (replace with database in production)
-let contactSubmissions: any[] = []
-
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json()
-    const { name, email, company, service, message } = body
-
-    // Validation
-    if (!name || !email || !message) {
+    const webhookUrl = process.env.CHAT_WEBHOOK_URL
+    if (!webhookUrl) {
       return NextResponse.json(
-        { error: 'Name, email, and message are required' },
-        { status: 400 }
+        { error: 'CHAT_WEBHOOK_URL is not configured' },
+        { status: 500 }
       )
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Please provide a valid email address' },
-        { status: 400 }
-      )
+    const body = await req.json()
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
     }
+    const token = process.env.CHAT_WEBHOOK_TOKEN
+    if (token) headers['Authorization'] = `Bearer ${token}`
 
-    // Create submission object
-    const submission = {
-      id: Date.now().toString(),
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      company: company?.trim() || '',
-      service: service || '',
-      message: message.trim(),
-      timestamp: new Date().toISOString(),
-      status: 'new'
-    }
+    const upstream = await fetch(webhookUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    })
 
-    // Store the submission (in production, save to database)
-    contactSubmissions.push(submission)
+    // Try to proxy JSON response; fall back to text
+    const text = await upstream.text()
+    let json: any
+    try { json = JSON.parse(text) } catch { json = { reply: text } }
 
-    // Log the submission (in production, send email notification)
-    console.log('New contact submission:', submission)
-
-    // Send to Google Sheets
-    try {
-      const googleSheetsUrl = process.env.GOOGLE_SHEETS_WEBAPP_URL
-      if (googleSheetsUrl) {
-        await fetch(googleSheetsUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(submission),
-        })
-        console.log('Data sent to Google Sheets successfully')
-      }
-    } catch (error) {
-      console.error('Error sending to Google Sheets:', error)
-    }
-
-    // Return success response
+    return NextResponse.json(json, { status: upstream.status })
+  } catch (err) {
     return NextResponse.json(
-      { 
-        success: true, 
-        message: 'Thank you for your message! We will get back to you soon.',
-        submissionId: submission.id
-      },
-      { status: 201 }
-    )
-
-  } catch (error) {
-    console.error('Contact form error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error. Please try again later.' },
+      { error: 'Chat proxy error' },
       { status: 500 }
     )
   }
 }
 
-// Optional: GET endpoint to retrieve submissions (for admin purposes)
-export async function GET() {
-  return NextResponse.json(
-    { submissions: contactSubmissions },
-    { status: 200 }
-  )
-}
+export const maxDuration = 10
+
+
