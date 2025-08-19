@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, KeyboardEvent } from 'react'
-import { CheckCircle, Clock, Mail, Building, MessageCircle, X } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { CheckCircle, Clock, Mail, Building, MessageCircle } from 'lucide-react'
 
 interface ContactSubmission {
   id: string
@@ -14,21 +14,10 @@ interface ContactSubmission {
   status: string
 }
 
-interface Message {
-  sender: string
-  text: string
-}
-
 export default function AdminPage() {
-  // Existing submission state and logic
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-
-  // Chatbot state
-  const [chatOpen, setChatOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([])
-  const [input, setInput] = useState('')
 
   useEffect(() => {
     fetchSubmissions()
@@ -43,7 +32,7 @@ export default function AdminPage() {
       } else {
         setError('Failed to fetch submissions')
       }
-    } catch {
+    } catch (error) {
       setError('Network error')
     } finally {
       setLoading(false)
@@ -54,36 +43,20 @@ export default function AdminPage() {
     return new Date(timestamp).toLocaleString()
   }
 
-  // Chatbot send message logic
-  const sendMessage = async () => {
-    if (!input.trim()) return
-    setMessages((msgs) => [...msgs, { sender: 'You', text: input }])
-    const userInput = input
-    setInput('')
-
-    try {
-      const res = await fetch('https://cursortot.app.n8n.cloud/webhook/2fe1cef9-0049-4bd2-ab6c-6374433c0557', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userInput }),
-      })
-      const data = await res.json()
-      setMessages((msgs) => [...msgs, { sender: 'Bot', text: data.reply }])
-    } catch {
-      setMessages((msgs) => [...msgs, { sender: 'Error', text: 'Failed to get response' }])
-    }
-  }
-
-  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      sendMessage()
-    }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-cheesh-dark via-gray-900 to-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-cheesh-orange mx-auto mb-4"></div>
+          <h2 className="text-white text-xl font-semibold">Loading Submissions...</h2>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cheesh-dark via-gray-900 to-black relative">
+    <div className="min-h-screen bg-gradient-to-br from-cheesh-dark via-gray-900 to-black">
       <div className="container mx-auto px-4 py-8">
-        {/* Existing Contact Submission UI */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">Contact Form Submissions</h1>
           <p className="text-gray-300">Manage and view all contact form submissions</p>
@@ -95,14 +68,7 @@ export default function AdminPage() {
           </div>
         )}
 
-        {loading ? (
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-cheesh-orange mx-auto mb-4"></div>
-              <h2 className="text-white text-xl font-semibold">Loading Submissions...</h2>
-            </div>
-          </div>
-        ) : submissions.length === 0 ? (
+        {submissions.length === 0 ? (
           <div className="bg-gray-800/30 backdrop-blur-custom rounded-2xl p-8 border border-gray-700/50 text-center">
             <MessageCircle className="w-16 h-16 text-gray-500 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-white mb-2">No Submissions Yet</h3>
@@ -111,77 +77,69 @@ export default function AdminPage() {
         ) : (
           <div className="grid gap-6">
             {submissions.map((submission) => (
-              <div
-                key={submission.id}
-                className="bg-gray-800/30 backdrop-blur-custom rounded-2xl p-6 border border-gray-700/50"
-              >
-                {/* Existing submission display code here (your current detailed layout) */}
+              <div key={submission.id} className="bg-gray-800/30 backdrop-blur-custom rounded-2xl p-6 border border-gray-700/50">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-cheesh-orange rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold text-sm">
+                        {submission.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">{submission.name}</h3>
+                      <p className="text-gray-400 text-sm">{submission.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Clock className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-400 text-sm">{formatDate(submission.timestamp)}</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  {submission.company && (
+                    <div className="flex items-center space-x-2">
+                      <Building className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-300 text-sm">{submission.company}</span>
+                    </div>
+                  )}
+                  {submission.service && (
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="w-4 h-4 text-cheesh-green" />
+                      <span className="text-gray-300 text-sm">{submission.service}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-gray-700/30 rounded-lg p-4">
+                  <h4 className="text-white font-medium mb-2">Message:</h4>
+                  <p className="text-gray-300 text-sm leading-relaxed">{submission.message}</p>
+                </div>
+
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-xs text-gray-500">ID: {submission.id}</span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    submission.status === 'new' 
+                      ? 'bg-cheesh-orange/20 text-cheesh-orange' 
+                      : 'bg-gray-600/20 text-gray-400'
+                  }`}>
+                    {submission.status}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
         )}
 
         <div className="mt-8 text-center">
-          <button onClick={fetchSubmissions} className="btn-secondary">
+          <button 
+            onClick={fetchSubmissions}
+            className="btn-secondary"
+          >
             Refresh Submissions
           </button>
         </div>
       </div>
-
-      {/* Chatbot toggle button */}
-      <button
-        onClick={() => setChatOpen(!chatOpen)}
-        className="fixed bottom-6 right-6 bg-cheesh-orange text-black px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow font-semibold z-50"
-        aria-label="Toggle Chatbot"
-      >
-        {chatOpen ? 'Close Chat' : 'Chat'}
-      </button>
-
-      {/* Chatbot window */}
-      {chatOpen && (
-        <div
-          className="fixed bottom-20 right-6 w-80 max-h-[500px] bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-2xl flex flex-col overflow-hidden z-50"
-          style={{ boxShadow: '0 8px 20px rgb(0 0 0 / 0.8)' }}
-        >
-          <div className="flex items-center justify-between bg-cheesh-orange px-4 py-2">
-            <h3 className="text-black font-bold">Chatbot</h3>
-            <button onClick={() => setChatOpen(false)} aria-label="Close Chat" className="text-black">
-              <X size={20} />
-            </button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-900 text-gray-200">
-            {messages.length === 0 && (
-              <p className="italic text-sm text-gray-400">Start the conversation by typing a message below.</p>
-            )}
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`max-w-[80%] p-2 rounded-md ${
-                  msg.sender === 'You'
-                    ? 'bg-cheesh-orange text-black self-end'
-                    : msg.sender === 'Bot'
-                    ? 'bg-gray-700 text-gray-200 self-start'
-                    : 'bg-red-600 text-white self-start'
-                }`}
-              >
-                <strong>{msg.sender}: </strong>
-                <span>{msg.text}</span>
-              </div>
-            ))}
-          </div>
-
-          <input
-            type="text"
-            aria-label="Type a message"
-            placeholder="Type a message..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="border-t border-gray-700 px-3 py-2 bg-gray-900 text-white focus:outline-none"
-          />
-        </div>
-      )}
     </div>
   )
 }
