@@ -67,7 +67,7 @@ export default function AssistantChat() {
       {
         id: 'm-welcome',
         role: 'bot',
-        text: 'Hi! I’m your automation assistant. Ask me about Workflow, Marketing, CRM, Customer Support, or Custom automations.',
+        text: 'Hi! I’m your automation assistant.how may I help you?',
         ts: Date.now(),
       },
     ])
@@ -199,5 +199,6 @@ export default function AssistantChat() {
     </div>
   )
 }
+
 
 
