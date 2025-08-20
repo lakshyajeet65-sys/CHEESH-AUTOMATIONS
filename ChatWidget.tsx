@@ -1,34 +1,50 @@
 'use client'
+import { useEffect, useState } from 'react'
 
-import { useEffect } from 'react'
-
-declare global {
-  interface Window {
-    $crisp?: any[]
-    CRISP_WEBSITE_ID?: string
-  }
-}
-
-const ChatWidget = () => {
+const N8nChatbot = () => {
+  const [chatLoaded, setChatLoaded] = useState(false)
+  
   useEffect(() => {
-    const websiteId = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID
-    if (typeof window === 'undefined') return
-    if (!websiteId) return
-    if (window.$crisp) return
-
-    window.$crisp = []
-    window.CRISP_WEBSITE_ID = websiteId
-
-    const d = document
-    const s = d.createElement('script')
-    s.src = 'https://client.crisp.chat/l.js'
-    s.async = true
-    d.getElementsByTagName('head')[0].appendChild(s)
+    const loadN8nChat = async () => {
+      try {
+        // Load CSS
+        const link = document.createElement('link')
+        link.href = 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css'
+        link.rel = 'stylesheet'
+        document.head.appendChild(link)
+        
+        // Load and initialize chat
+        const { createChat } = await import('https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js')
+        
+        createChat({
+          webhookUrl: process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL,
+          initialMessages: [
+            'Hello! I\'m your AI assistant.',
+            'How can I help you today?'
+          ],
+          showWelcomeScreen: true,
+          mode: 'window', // popup mode
+          i18n: {
+            en: {
+              title: 'AI Assistant',
+              subtitle: 'Powered by N8N',
+              inputPlaceholder: 'Ask me anything...'
+            }
+          }
+        })
+        
+        setChatLoaded(true)
+      } catch (error) {
+        console.error('Failed to load n8n chat:', error)
+      }
+    }
+    
+    if (process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL) {
+      loadN8nChat()
+    }
   }, [])
-
-  return null
+  
+  return chatLoaded ? null : <div>Loading chat...</div>
 }
 
-export default ChatWidget
-
-
+export default N8nChatbot
