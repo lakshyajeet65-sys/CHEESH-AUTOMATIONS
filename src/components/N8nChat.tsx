@@ -12,7 +12,6 @@ type ChatMessage = {
 type N8nResponse = {
   reply?: string
   quickReplies?: string[]
-  output?: string
 }
 
 function getSessionId(): string {
@@ -32,7 +31,6 @@ export default function N8nChat() {
   const [sending, setSending] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [quickReplies, setQuickReplies] = useState<string[]>([])
-  // Correctly typed ref for the chat messages container div
   const listRef = useRef<HTMLDivElement | null>(null)
 
   const proxyUrl = '/api/chat'
@@ -57,7 +55,6 @@ export default function N8nChat() {
 
   async function send(text: string) {
     if (!text.trim()) return
-    
     const userMsg: ChatMessage = {
       id: `u-${Date.now()}`,
       role: 'user',
@@ -81,7 +78,9 @@ export default function N8nChat() {
 
       const res = await fetch(proxyUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(payload),
       })
 
@@ -90,21 +89,16 @@ export default function N8nChat() {
 
       if (res.ok) {
         const contentType = res.headers.get('Content-Type') || ''
+
         if (contentType.includes('application/json')) {
-          const data = await res.json()
-
-          if (Array.isArray(data) && data.length > 0 && data[0].output) {
-            replyText = data.output
-          } else if (typeof data === 'string') {
+          const data = (await res.json()) as N8nResponse | string
+          if (typeof data === 'string') {
             replyText = data
-          } else if (data.reply) {
-            replyText = data.reply
           } else {
-            replyText = 'Okay.'
-          }
-
-          if (Array.isArray(data.quickReplies)) {
-            quicks = data.quickReplies
+            replyText = data.reply || 'Okay.'
+            if (Array.isArray(data.quickReplies)) {
+              quicks = data.quickReplies
+            }
           }
         } else {
           replyText = await res.text()
@@ -123,7 +117,7 @@ export default function N8nChat() {
           ts: Date.now(),
         },
       ])
-    } catch {
+    } catch (err) {
       setMessages((prev) => [
         ...prev,
         {
@@ -203,7 +197,7 @@ export default function N8nChat() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message…"
+              placeholder={'Type your message…'}
               className="flex-1 px-3 py-2 rounded-xl bg-gray-800 border border-gray-700 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cheesh-orange focus:border-transparent"
             />
             <button
