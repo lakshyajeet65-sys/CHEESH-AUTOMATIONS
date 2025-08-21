@@ -32,6 +32,7 @@ export default function N8nChat() {
   const [sending, setSending] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [quickReplies, setQuickReplies] = useState<string[]>([])
+  // Correctly typed ref for the chat messages container div
   const listRef = useRef<HTMLDivElement | null>(null)
 
   const proxyUrl = '/api/chat'
@@ -56,6 +57,7 @@ export default function N8nChat() {
 
   async function send(text: string) {
     if (!text.trim()) return
+    
     const userMsg: ChatMessage = {
       id: `u-${Date.now()}`,
       role: 'user',
@@ -79,9 +81,7 @@ export default function N8nChat() {
 
       const res = await fetch(proxyUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
 
@@ -90,7 +90,6 @@ export default function N8nChat() {
 
       if (res.ok) {
         const contentType = res.headers.get('Content-Type') || ''
-
         if (contentType.includes('application/json')) {
           const data = await res.json()
 
@@ -124,7 +123,7 @@ export default function N8nChat() {
           ts: Date.now(),
         },
       ])
-    } catch (err) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         {
