@@ -29,10 +29,14 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(body),
     })
 
-    // Try to proxy JSON response; fall back to text
     const text = await upstream.text()
+    console.log('Upstream response text:', text) // Debug log to check actual webhook reply
     let json: any
-    try { json = JSON.parse(text) } catch { json = { reply: text } }
+    try {
+      json = JSON.parse(text)
+    } catch {
+      json = { reply: text }
+    }
 
     if (!upstream.ok && debug) {
       return NextResponse.json(
@@ -41,12 +45,13 @@ export async function POST(req: NextRequest) {
           upstreamStatus: upstream.status,
           upstreamBody: text,
         },
-        { status: 200 }
+        { status: upstream.status }
       )
     }
 
     return NextResponse.json(json, { status: upstream.status })
   } catch (err) {
+    console.error('Chat proxy error:', err)
     return NextResponse.json(
       { error: 'Chat proxy error' },
       { status: 500 }
@@ -55,5 +60,3 @@ export async function POST(req: NextRequest) {
 }
 
 export const maxDuration = 10
-
-
