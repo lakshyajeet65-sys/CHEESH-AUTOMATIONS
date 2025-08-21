@@ -7,12 +7,8 @@ export const revalidate = 0
 export async function POST(req: NextRequest) {
   try {
     const webhookUrl = process.env.CHAT_WEBHOOK_URL
-    const debug = (process.env.DEBUG_CHAT_PROXY || '').toString() === '1'
     if (!webhookUrl) {
-      return NextResponse.json(
-        { error: 'CHAT_WEBHOOK_URL is not configured' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'CHAT_WEBHOOK_URL is not configured' }, { status: 500 })
     }
 
     const body = await req.json()
@@ -29,33 +25,21 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(body),
     })
 
-    const text = await upstream.text()
-    console.log('Upstream response text:', text) // Debug log to check actual webhook reply
-    let json: any
-    try {
-      json = JSON.parse(text)
-    } catch {
-      json = { reply: text }
-    }
+    const responseBody = await upstream.text()
 
-    if (!upstream.ok && debug) {
-      return NextResponse.json(
-        {
-          error: true,
-          upstreamStatus: upstream.status,
-          upstreamBody: text,
-        },
-        { status: upstream.status }
-      )
-    }
+    console.log('Upstream response status:', upstream.status)
+    console.log('Upstream response text:', responseBody)
 
-    return NextResponse.json(json, { status: upstream.status })
+    // Send raw text response with matching status and plain text content-type
+    return new NextResponse(responseBody, {
+      status: upstream.status,
+      headers: {
+        'Content-Type': 'text/plain'
+      }
+    })
   } catch (err) {
     console.error('Chat proxy error:', err)
-    return NextResponse.json(
-      { error: 'Chat proxy error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Chat proxy error' }, { status: 500 })
   }
 }
 
