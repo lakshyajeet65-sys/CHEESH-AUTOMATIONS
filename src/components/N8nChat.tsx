@@ -41,7 +41,7 @@ export default function N8nChat() {
       {
         id: 'welcome',
         role: 'bot',
-        text: 'Hi! How can I help you with automations today?',
+        text: 'Hey! How can I help you today?',
         ts: Date.now(),
       },
     ])
@@ -146,14 +146,14 @@ export default function N8nChat() {
           aria-label="Open chat"
         >
           <span className="w-2 h-2 rounded-full bg-cheesh-green animate-pulse" />
-          <span className="text-white font-semibold">Chat</span>
+          <span className="text-white font-semibold">LiveChat</span>
         </button>
       )}
 
       {open && (
         <div className="w-[92vw] max-w-sm h-[60vh] sm:h-[64vh] rounded-2xl shadow-2xl border border-gray-700/50 bg-gray-900/95 backdrop-blur-custom overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-gradient-to-r from-cheesh-orange/20 via-cheesh-red/10 to-cheesh-blue/10">
-            <span className="text-white font-semibold">Automation Chat</span>
+            <span className="text-white font-semibold">CHEESH Assistant</span>
             <button
               onClick={() => setOpen(false)}
               className="p-1.5 rounded-lg hover:bg-gray-800 text-gray-300 transition-colors"
@@ -216,3 +216,4 @@ export default function N8nChat() {
     </div>
   )
 }
+
