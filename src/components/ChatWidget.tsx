@@ -9,11 +9,6 @@ type ChatMessage = {
   ts: number
 }
 
-type N8nResponse = {
-  reply?: string
-  quickReplies?: string[]
-}
-
 function getSessionId(): string {
   if (typeof window === 'undefined') return ''
   const key = 'chat_session_id'
@@ -30,7 +25,6 @@ export default function N8nChat() {
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [quickReplies, setQuickReplies] = useState<string[]>([])
   const listRef = useRef<HTMLDivElement | null>(null)
 
   const proxyUrl = '/api/chat'
@@ -85,28 +79,18 @@ export default function N8nChat() {
       })
 
       let replyText = ''
-      let quicks: string[] = []
       if (res.ok) {
-        const data = (await res.json()) as N8nResponse | string
-        if (typeof data === 'string') {
-          replyText = data
-        } else {
-          replyText = data.reply || 'Okay.'
-          if (Array.isArray(data.quickReplies)) {
-            quicks = data.quickReplies
-          }
-        }
+        replyText = await res.text()
       } else {
         replyText = `Received ${res.status}. Please try again.`
       }
 
-      setQuickReplies(quicks)
       setMessages((prev) => [
         ...prev,
         {
           id: `b-${Date.now()}`,
           role: 'bot',
-          text: replyText,
+          text: replyText || 'No response from bot.',
           ts: Date.now(),
         },
       ])
@@ -171,20 +155,6 @@ export default function N8nChat() {
               </div>
             ))}
           </div>
-
-          {quickReplies.length > 0 && (
-            <div className="px-3 pb-2 flex flex-wrap gap-2">
-              {quickReplies.map((q) => (
-                <button
-                  key={q}
-                  onClick={() => send(q)}
-                  className="text-xs px-3 py-1.5 rounded-full border border-cheesh-orange/40 text-cheesh-orange hover:bg-cheesh-orange/10 transition"
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="px-3 pb-3 flex items-center gap-2">
             <input
