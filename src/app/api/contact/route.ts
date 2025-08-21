@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       service: service || '',
       message: message.trim(),
       timestamp: new Date().toISOString(),
-      status: 'new'
+      status: 'New'
     }
 
     // Store the submission (in production, save to database)
@@ -106,4 +106,5 @@ export async function GET() {
     { status: 200 }
   )
 }
+
 
