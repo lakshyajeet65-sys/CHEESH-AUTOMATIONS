@@ -141,7 +141,7 @@ export default function AssistantChat() {
           aria-label="Open chat"
         >
           <MessageSquare className="w-5 h-5 text-white" />
-          <span className="text-white font-semibold">Chat</span>
+          <span className="text-white font-semibold">LiveChat</span>
           <span className="absolute -top-2 -right-2 inline-flex items-center gap-1 rounded-full bg-cheesh-blue text-white text-xs px-2 py-0.5 shadow">
             <Sparkles className="w-3 h-3" /> AI
           </span>
@@ -154,7 +154,7 @@ export default function AssistantChat() {
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-gradient-to-r from-cheesh-orange/20 via-cheesh-red/10 to-cheesh-blue/10">
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5 text-cheesh-orange" />
-              <span className="text-white font-semibold">Automation Assistant</span>
+              <span className="text-white font-semibold">CHEESH Assistant</span>
             </div>
             <button
               onClick={() => setOpen(false)}
@@ -216,5 +216,6 @@ export default function AssistantChat() {
     </div>
   )
 }
+
 
 
