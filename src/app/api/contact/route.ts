@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     // Send to generic webhook if configured
     try {
-      const webhookUrl = process.env.CONTACT_WEBHOOK_URL
+      const webhookUrl = process.env.GOOGLE_SHEETS_WEBAPP_URL
       if (webhookUrl) {
         const payload = {
           type: 'contact.submission',
@@ -106,3 +106,4 @@ export async function GET() {
     { status: 200 }
   )
 }
+
