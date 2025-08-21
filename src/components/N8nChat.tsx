@@ -12,6 +12,7 @@ type ChatMessage = {
 type N8nResponse = {
   reply?: string
   quickReplies?: string[]
+  output?: string
 }
 
 function getSessionId(): string {
@@ -91,14 +92,20 @@ export default function N8nChat() {
         const contentType = res.headers.get('Content-Type') || ''
 
         if (contentType.includes('application/json')) {
-          const data = (await res.json()) as N8nResponse | string
-          if (typeof data === 'string') {
+          const data = await res.json()
+
+          if (Array.isArray(data) && data.length > 0 && data[0].output) {
+            replyText = data.output
+          } else if (typeof data === 'string') {
             replyText = data
+          } else if (data.reply) {
+            replyText = data.reply
           } else {
-            replyText = data.reply || 'Okay.'
-            if (Array.isArray(data.quickReplies)) {
-              quicks = data.quickReplies
-            }
+            replyText = 'Okay.'
+          }
+
+          if (Array.isArray(data.quickReplies)) {
+            quicks = data.quickReplies
           }
         } else {
           replyText = await res.text()
