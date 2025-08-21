@@ -33,12 +33,10 @@ export default function N8nChat() {
   const [quickReplies, setQuickReplies] = useState<string[]>([])
   const listRef = useRef<HTMLDivElement | null>(null)
 
-  // Use server-side proxy instead of exposing secrets
   const proxyUrl = '/api/chat'
   const sessionId = useMemo(() => getSessionId(), [])
 
   useEffect(() => {
-    // Welcome message
     setMessages([
       {
         id: 'welcome',
@@ -88,15 +86,22 @@ export default function N8nChat() {
 
       let replyText = ''
       let quicks: string[] = []
+
       if (res.ok) {
-        const data = (await res.json()) as N8nResponse | string
-        if (typeof data === 'string') {
-          replyText = data
-        } else {
-          replyText = data.reply || 'Okay.'
-          if (Array.isArray(data.quickReplies)) {
-            quicks = data.quickReplies
+        const contentType = res.headers.get('Content-Type') || ''
+
+        if (contentType.includes('application/json')) {
+          const data = (await res.json()) as N8nResponse | string
+          if (typeof data === 'string') {
+            replyText = data
+          } else {
+            replyText = data.reply || 'Okay.'
+            if (Array.isArray(data.quickReplies)) {
+              quicks = data.quickReplies
+            }
           }
+        } else {
+          replyText = await res.text()
         }
       } else {
         replyText = `Received ${res.status}. Please try again.`
@@ -198,7 +203,9 @@ export default function N8nChat() {
             <button
               type="submit"
               disabled={sending}
-              className={`h-10 px-4 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cheesh-orange to-cheesh-red text-white shadow ${sending ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 transition'}`}
+              className={`h-10 px-4 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cheesh-orange to-cheesh-red text-white shadow ${
+                sending ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 transition'
+              }`}
               aria-label="Send"
             >
               {sending ? '…' : 'Send'}
@@ -209,5 +216,3 @@ export default function N8nChat() {
     </div>
   )
 }
-
-
